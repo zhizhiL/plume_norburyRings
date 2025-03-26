@@ -5,7 +5,7 @@ from scipy.integrate import solve_ivp
 from multiprocessing import Pool
 import matplotlib.pyplot as plt
 
-R, gravity, Fr = 2, True, 0.5
+R, gravity, Fr = 2, True, 2
 
 path = 'velocity_fields/alpha_0.8_2D/'
 
@@ -21,7 +21,7 @@ geometry = np.load(path + 'geometry.npy', allow_pickle=True)
 x_core, y_core, y_core_lower, x_ring, y_ring = geometry.T
 
 # load interpolation functions
-with open(path + 'interp_functions.pkl', 'rb') as f:
+with open(path + 'interp_functions_v14.pkl', 'rb') as f:
     interp_Ux, interp_Ur, interp_dUxdx, interp_dUxdr, interp_dUrdx, interp_dUrdr = pickle.load(f)
 
 def solve_ivp_active(args):
@@ -32,15 +32,15 @@ def solve_ivp_active(args):
         r_planar = np.sqrt(yp**2 + zp**2)
         theta = np.arctan2(zp, yp)   # check if this is correct
 
-        Uxp = interp_Ux(xp, r_planar)[0]
+        Uxp = interp_Ux(xp, r_planar)[0][0]
         Urp = interp_Ur(xp, r_planar)[0]
         Uyp = Urp * yp / r_planar
         Uzp = Urp * zp / r_planar
 
-        dUxdx_p = interp_dUxdx(xp, r_planar)[0]
-        dUxdr_p = interp_dUxdr(xp, r_planar)[0]
-        dUrdx_p = interp_dUrdx(xp, r_planar)[0]
-        dUrdr_p = interp_dUrdr(xp, r_planar)[0]
+        dUxdx_p = interp_dUxdx(xp, r_planar)[0][0]
+        dUxdr_p = interp_dUxdr(xp, r_planar)[0][0]
+        dUrdx_p = interp_dUrdx(xp, r_planar)[0][0]
+        dUrdr_p = interp_dUrdr(xp, r_planar)[0][0]
 
         # apply chain rule for derivatives in the cartesian coordinate
         dUxdy_p = dUxdr_p / np.cos(theta) if np.cos(theta) != 0 else 0
@@ -105,15 +105,15 @@ def solve_ivp_active_res(args):
         r_planar = np.sqrt(yp**2 + zp**2)
         theta = np.arctan2(zp, yp)   # check if this is correct
 
-        Uxp = interp_Ux(xp, r_planar)[0]
-        Urp = interp_Ur(xp, r_planar)[0]
+        Uxp = interp_Ux(xp, r_planar)[0][0]
+        Urp = interp_Ur(xp, r_planar)[0][0]
         Uyp = Urp * yp / r_planar
         Uzp = Urp * zp / r_planar
 
-        dUxdx_p = interp_dUxdx(xp, r_planar)[0]
-        dUxdr_p = interp_dUxdr(xp, r_planar)[0]
-        dUrdx_p = interp_dUrdx(xp, r_planar)[0]
-        dUrdr_p = interp_dUrdr(xp, r_planar)[0]
+        dUxdx_p = interp_dUxdx(xp, r_planar)[0][0]
+        dUxdr_p = interp_dUxdr(xp, r_planar)[0][0]
+        dUrdx_p = interp_dUrdx(xp, r_planar)[0][0]
+        dUrdr_p = interp_dUrdr(xp, r_planar)[0][0]
 
         # apply chain rule for derivatives in the cartesian coordinate
         dUxdy_p = dUxdr_p / np.cos(theta) if np.cos(theta) != 0 else 0

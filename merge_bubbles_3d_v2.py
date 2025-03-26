@@ -5,12 +5,12 @@ import scipy as sp
 import matplotlib.colors as mcolors
 
 # load geometry files
-path = 'velocity_fields/alpha_0.4_2D/'
+path = 'velocity_fields/alpha_0.8_2D/'
 
 geometry = np.load(path + 'geometry.npy', allow_pickle=True)
 x_core, y_core, y_core_lower, x_ring, y_ring = geometry.T
 
-donuts = np.load('plotting_donuts/alpha04_3D_core.npy', allow_pickle=True)
+donuts = np.load('plotting_donuts/alpha08_3D_core.npy', allow_pickle=True)
 cross_section_x, cross_section_y, cross_section_z = donuts.T
 
 '''
@@ -202,6 +202,7 @@ def merge_package(Bubbles_df_before_merge: np.ndarray, advected_states: np.ndarr
 
             # update the new incore fraction (weighted by volume)
             new_incore_fraction = (master_row[7]**1.5 * master_row[15] + slave_row[7]**1.5 * slave_row[15]) / (master_row[7]**1.5 + slave_row[7]**1.5)
+            new_incore_fraction_lower = (master_row[7]**1.5 * master_row[16] + slave_row[7]**1.5 * slave_row[16]) / (master_row[7]**1.5 + slave_row[7]**1.5)
 
             # update the bubble dataframe location and velocity using volume-weighted average
             new_xp, new_yp, new_zp, new_vx, new_vy, new_vz = (master_row[1:7] * (master_row[7]**1.5) + 
@@ -217,7 +218,7 @@ def merge_package(Bubbles_df_before_merge: np.ndarray, advected_states: np.ndarr
             # update the master_row and slave_row
             bubbles_df[np.where(bubbles_df[:, 0] == master_ID)[0][0], :] = np.array([master_ID, new_xp, new_yp, new_zp, 
                                                                                     new_vx, new_vy, new_vz, new_st, False, new_jA, new_iA, new_kA, 
-                                                                                    new_jB, new_iB, new_kB, new_incore_fraction])
+                                                                                    new_jB, new_iB, new_kB, new_incore_fraction, new_incore_fraction_lower])
             
             bubbles_df[np.where(bubbles_df[:, 0] == slave_ID)[0][0], :] = np.full(slave_row.shape, np.nan)
 
